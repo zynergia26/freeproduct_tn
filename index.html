@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Our Magical Fairytale ✨</title>
+    <style>
+        /* =========================================
+           CSS VARIABLES & RESET
+           ========================================= */
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-light: #162032;
+            --primary-glow: rgba(255, 182, 193, 0.8);
+            --cloud-bg: rgba(255, 255, 255, 0.9);
+            --text-dark: #333;
+            --text-light: #fff;
+            --btn-bg: #ff6b81;
+            --btn-hover: #ff4757;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(ellipse at bottom, var(--bg-light) 0%, var(--bg-dark) 100%);
+            color: var(--text-light);
+            overflow-x: hidden;
+            min-height: 100vh;
+            scroll-behavior: smooth;
+        }
+
+        /* Accessibility: Focus outlines */
+        *:focus-visible {
+            outline: 3px solid var(--btn-bg);
+            outline-offset: 2px;
+        }
+
+        /* =========================================
+           MAGICAL BACKGROUND EFFECTS
+           ========================================= */
+        #stars-container, #fireflies-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle infinite alternate;
+        }
+
+        .firefly {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: #e2ff6b;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #e2ff6b;
+            animation: float-firefly 10s infinite linear;
+        }
+
+        .moon {
+            position: fixed;
+            top: 5%; right: 10%;
+            width: 80px; height: 80px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(255,255,255,0.5), inset -15px -15px 0 0 rgba(0,0,0,0.1);
+            z-index: 0;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 10px #fff; }
+        }
+        @keyframes float-firefly {
+            0% { transform: translate(0, 0) scale(1); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translate(100px, -100px) scale(1.5); opacity: 0; }
+        }
+
+        /* =========================================
+           LAYOUT & SCREENS
+           ========================================= */
+        .screen {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease-in-out;
+            z-index: 10;
+            padding: 20px;
+            text-align: center;
+        }
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
+            position: relative;
+        }
+
+        #screen-story {
+            height: auto;
+            min-height: 100vh;
+            display: none; 
+            padding-bottom: 100px;
+        }
+        #screen-story.active {
+            display: block;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* =========================================
+           PANDA & CLOUD STYLES
+           ========================================= */
+        .panda-container {
+            position: relative;
+            z-index: 20;
+            margin-bottom: 20px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .panda-img {
+            width: 180px;
+            max-width: 60vw;
+            transition: all 0.5s ease;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+            border-radius: 20px;
+        }
+
+        /* Kept animations to enhance your images */
+        .panda-happy {
+            animation: bounce 0.6s infinite !important;
+            filter: drop-shadow(0 0 25px var(--primary-glow)) !important;
+        }
+        .panda-angry {
+            animation: shake 0.4s infinite !important;
+        }
+        .panda-curious {
+            transform: rotate(10deg) scale(1.05);
+        }
+
+        .cloud-base {
+            background: var(--cloud-bg);
+            color: var(--text-dark);
+            padding: 30px;
+            border-radius: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3), inset 0 -5px 15px rgba(0,0,0,0.1);
+            max-width: 90%;
+            width: 400px;
+            position: relative;
+        }
+
+        /* =========================================
+           TYPOGRAPHY & UI ELEMENTS
+           ========================================= */
+        h1 { font-size: 1.8rem; margin-bottom: 15px; font-weight: 600; }
+        p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 15px; }
+        
+        .typewriter {
+            display: inline-block;
+            overflow: hidden;
+            white-space: normal;
+            border-right: .15em solid orange;
+            margin: 0 auto;
+            animation: blink-caret .75s step-end infinite;
+        }
+
+        .glowing-input {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255, 182, 193, 0.5);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px 0;
+            box-shadow: 0 0 15px rgba(255, 182, 193, 0.2);
+            transition: all 0.3s;
+        }
+        .glowing-input:focus {
+            box-shadow: 0 0 25px rgba(255, 182, 193, 0.8);
+            border-color: var(--primary-glow);
+        }
+
+        .btn {
+            background: var(--btn-bg);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 107, 129, 0.4);
+            transition: all 0.3s;
+            font-weight: bold;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 250px;
+        }
+        .btn:hover, .btn:active {
+            background: var(--btn-hover);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 107, 129, 0.6);
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* =========================================
+           ANIMATIONS
+           ========================================= */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-25px); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            25% { transform: translateX(-5px) rotate(-5deg); }
+            75% { transform: translateX(5px) rotate(5deg); }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--btn-bg); }
+        }
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.2); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        .shake-error { animation: shake 0.4s; }
+
+        /* =========================================
+           HEART REVEAL & CANDLE
+           ========================================= */
+        .giant-heart {
+            font-size: 100px;
+            animation: heartbeat 1.5s infinite;
+            filter: drop-shadow(0 0 30px red);
+            margin: 30px 0;
+            display: none;
+        }
+
+        .candle-container {
+            font-size: 80px;
+            margin: 20px 0;
+            position: relative;
+            display: inline-block;
+        }
+        .flame {
+            position: absolute;
+            top: -30px; left: 50%;
+            transform: translateX(-50%);
+            width: 20px; height: 40px;
+            background: #ffcc00;
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 20px #ffcc00, 0 0 40px #ff9900;
+            animation: flicker 0.1s infinite alternate;
+        }
+        .flame.extinguished { display: none; }
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1) skewX(2deg); opacity: 0.9; }
+            100% { transform: translateX(-50%) scale(1.1) skewX(-2deg); opacity: 1; }
+        }
+        
+        .countdown {
+            font-size: 5rem;
+            font-weight: bold;
+            color: var(--primary-glow);
+            text-shadow: 0 0 20px white;
+            animation: popIn 1s forwards;
+            display: none;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
+        /* =========================================
+           SCROLLING CLOUD STORY
+           ========================================= */
+        .story-header {
+            text-align: center;
+            padding: 50px 20px;
+            margin-bottom: 50px;
+        }
+        
+        .story-cloud {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text-dark);
+            padding: 30px;
+            border-radius: 40px;
+            width: 90%;
+            max-width: 500px;
+            margin: 0 auto 100px auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            opacity: 0;
+            transform: translateY(50px) scale(0.9);
+            transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            text-align: left;
+        }
+        .story-cloud.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .story-cloud:nth-child(even) { margin-left: 5%; }
+        .story-cloud:nth-child(odd) { margin-right: 5%; }
+
+        .story-panda {
+            position: absolute;
+            top: -60px;
+            width: 100px;
+            border-radius: 50%;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+        }
+        .story-cloud:nth-child(even) .story-panda { right: 20px; }
+        .story-cloud:nth-child(odd) .story-panda { left: 20px; }
+
+        .final-forever-cloud {
+            text-align: center;
+            padding: 60px 30px;
+            background: rgba(255, 255, 255, 1);
+            border-radius: 50px;
+            box-shadow: 0 0 50px rgba(255, 182, 193, 0.8);
+            margin: 50px auto 100px auto;
+        }
+
+        #music-toggle {
+            position: fixed;
+            bottom: 20px; right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none; border-radius: 50%;
+            width: 50px; height: 50px;
+            color: white; font-size: 1.5rem;
+            z-index: 100; cursor: pointer; display: none;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="moon"></div>
+    <div id="stars-container" aria-hidden="true"></div>
+    <div id="fireflies-container" aria-hidden="true"></div>
+    <button id="music-toggle" aria-label="Toggle Music">🎵</button>
+    <audio id="bg-music" loop></audio>
+
+    <main>
+        <!-- SCREEN 1: PASSWORD -->
+        <section id="screen-password" class="screen active">
+            <div class="panda-container">
+                <!-- Uses Normal Panda to start -->
+                <img src="panda-normal.png" alt="Magical Cute Panda" class="panda-img" id="pwd-panda">
+            </div>
+            <div class="cloud-base">
+                <h1>Welcome to our little magical world... ✨</h1>
+                <p>But first...<br>Tell me the secret password ❤️</p>
+                <input type="password" id="magic-password" class="glowing-input" placeholder="Password...">
+                <div id="pwd-error" role="alert" style="color: red; height: 24px; font-weight: bold; margin-bottom: 10px;"></div>
+                <button class="btn" onclick="checkPassword()">Enter the magical world ✨</button>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: INTRO -->
+        <section id="screen-intro" class="screen">
+            <div class="panda-container">
+                <!-- Uses Curious Panda -->
+                <img src="panda-curious.png" alt="Curious Panda" class="panda-img panda-curious">
+            </div>
+            <div class="cloud-base">
+                <p id="intro-text" class="typewriter" style="min-height: 80px; font-weight: bold; font-size: 1.2rem;"></p>
+                <button id="btn-start-quiz" class="btn" style="display: none;" onclick="startQuiz()">Let's find out 👀</button>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: QUIZ -->
+        <section id="screen-quiz" class="screen">
+            <div class="panda-container">
+                <!-- Starts with Normal Panda per question -->
+                <img src="panda-normal.png" alt="Quiz Panda" class="panda-img" id="quiz-panda">
+            </div>
+            <div class="cloud-base">
+                <p style="color: #666; font-size: 0.9rem; font-weight: bold;" id="quiz-progress">Question 1 of 5</p>
+                <h2 id="quiz-question" style="margin: 15px 0;"></h2>
+                <div class="options-grid" id="quiz-options"></div>
+                <div id="quiz-feedback" role="alert" style="margin-top: 15px; font-weight: bold; font-size: 1.2rem; min-height: 60px;"></div>
+            </div>
+        </section>
+
+        <!-- SCREEN 4: HEART REVEAL -->
+        <section id="screen-heart-reveal" class="screen">
+            <div class="panda-container">
+                <!-- Uses Romantic Panda -->
+                <img src="panda-romantic.png" alt="Romantic Panda" class="panda-img panda-happy">
+            </div>
+            <div class="cloud-base" style="background: transparent; box-shadow: none; color: white;">
+                <h2 id="heart-text-1">Ahaa...</h2>
+                <div class="giant-heart" id="giant-heart">❤️️</div>
+                <h1 id="heart-text-2" style="display:none; color: var(--primary-glow); text-shadow: 0 0 20px red; font-size: 2.5rem;">ENNODA HEART-A! ❤</h1>
+                <div id="punishment-section" style="display: none; margin-top: 30px;">
+                    <p>Adhukku punishment irukku... 😈</p>
+                    <button class="btn" onclick="showPunishment()">Show my punishment 👀</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 5: PUNISHMENT -->
+        <section id="screen-punishment" class="screen">
+            <div class="panda-container">
+                <!-- Uses Normal Panda -->
+                <img src="panda-normal.png" alt="Panda intro to punishment" class="panda-img">
+            </div>
+            <div class="cloud-base">
+                <h2>En punishment-na...</h2>
+                <p>Indha candle-a blow pannanum! 🕯️💨<br><br>Naa solratha pannanum... okay? 😌❤️</p>
+                <button class="btn" onclick="startCandleScene()">Okay, I'll do it ❤️</button>
+            </div>
+        </section>
+
+        <!-- SCREEN 6: CANDLE BLOW -->
+        <section id="screen-candle" class="screen">
+            <div id="countdown-display" class="countdown">3</div>
+            
+            <div id="candle-ui" style="display:none; text-align: center;">
+                <div class="candle-container">
+                    🕯️
+                    <div class="flame" id="candle-flame"></div>
+                </div>
+                <div class="panda-container" style="margin-top: 20px;">
+                    <!-- Uses Candle Panda -->
+                    <img src="panda-candle.png" alt="Panda with Candle" class="panda-img" id="candle-panda">
+                </div>
+                <p style="font-size: 1.5rem; font-weight: bold; margin: 20px 0; text-shadow: 0 0 10px white;">Blow into your microphone! 💨</p>
+                <button class="btn" onclick="extinguishCandle()">Fallback: Blow the candle 💨</button>
+            </div>
+        </section>
+
+        <!-- SCREEN 7: ANNIVERSARY & STORY -->
+        <section id="screen-story" class="screen">
+            <div class="story-header">
+                <div class="panda-container">
+                    <!-- Uses Happy Panda -->
+                    <img src="panda-happy.png" alt="Happy Panda" class="panda-img panda-happy">
+                </div>
+                <h1 style="font-size: 3rem; color: var(--primary-glow); text-shadow: 0 0 20px white;">HAPPY 1ST ANNIVERSARY ❤</h1>
+                <p style="font-size: 1.5rem;">One year of us...<br>...and I hope this is only the beginning of forever. ♾️</p>
+                <p style="margin-top: 40px; color: #aaa; animation: bounce 2s infinite;">(Scroll down ☁️👇)</p>
+            </div>
+
+            <div id="story-clouds-container"></div>
+
+            <div class="story-cloud final-forever-cloud visible" style="opacity: 1; transform: none; margin-top: 100px;">
+                <!-- Uses Romantic Panda -->
+                <img src="panda-romantic.png" alt="Forever Panda" class="panda-img panda-happy" style="width: 200px; margin-bottom: 20px;">
+                <h2>Happy 1st Anniversary, my love. ❤️🥹</h2>
+                <br>
+                <p style="font-size: 1.3rem;">One year of us...</p>
+                <p style="font-size: 1.3rem;">...and I hope this is only the beginning of forever. ♾</p>
+                <br>
+                <h1 style="font-size: 2.5rem;">🐼 ❤️ 🐼</h1>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const CONFIG = {
+            password: "08042004", 
+            musicURL: "", 
+            questions: [
+                { q: "Do you love her?", options: ["Yes ❤️", "No 😐"], answer: 0 },
+                { q: "Will you marry her?", options: ["Yes 💍", "No 😭"], answer: 0 },
+                { q: "Will you buy her a Taco from Taco Bell?", options: ["Yes 🌮", "No 😭"], answer: 0 },
+                { q: "Will you buy her a Panda doll?", options: ["Yes 🐼", "No 😤"], answer: 0 },
+                { q: "What's the food she likes more?", options: ["Biryani 🍛", "Macaroni 🍝", "Maggie 🍜"], answer: 1 }
+            ],
+            storyParagraphs: [
+                "Indha one year-la naama niraiya love pannom, niraiya sanda potom, niraiya sirichom, niraiya moments share pannom… sometimes romba happy-ah irundhom, sometimes chinna chinna vishayathukkellam sanda pottu pesama irundhom. 🥹❤️ Aana evlo things nadandhaalum, indha one year en life-la romba special-ah irundhudhu, because indha one year-la en kooda irundhadhu nee.",
+                "Sometimes namma rendu perukkum distance irukkuradhu romba kashtama irukku. Unna paakanum, un kooda pesanum, un pakkathula ukkanthu konjam neram summa irukkanum, un kaiya pudichu nadakkanum nu romba aasaiya irukku. I hope oru naal indha distance ellam mudinju, naan un pakkathula ninnu un kaiya hold pannumbodhu, namma ippo experience panra ella kashtamum, kovamum, misunderstandings-um worth it dhaan nu feel pannuvom. Andha moment-la unna paatha udane en kovam ellam poidum nu namburen. 🥺❤️",
+                "Namma life-la innum neraya things varum… innum sanda varalam, sometimes namma oruthar mela oruthar kovapadalam, sometimes purinjukka mudiyama pogalam. But whatever happens, I hope at the end of everything, we always find our way back to each other. Namma rendu perum perfect illa, namma relationship-um perfect illa… but I love the way we still choose each other even after all the little fights and misunderstandings.",
+                "I hope life long ipdiye un koodave irundhu, unna love panni, unna torture panni 😂, un kooda sanda pottu, sanda mudinja apram marubadiyum pesi, sirichu, neraya memories create panni happy-ah irukkanum. I want to see us growing together, supporting each other, celebrating each other's little victories, and being there for each other even on the days when everything feels difficult.",
+                "Enakku future-la enna nadakkum nu exact-ah theriyadhu… but en future-la nee irukkanum nu mattum romba aasai. One year mudinjiduchu, but honestly, I don't want this to be just one year. I want many more years with you… more love, more laughs, more stupid fights, more hugs, more memories, and a lifetime of choosing each other. ❤️",
+                "Yevlo distance irundhaalum, yevlo sanda vandhaalum, yevlo kovam vandhaalum, at the end of the day, I still want you. I still choose you. And I still lovvveeee youuuuu so muchhh. 🥹❤️",
+                "I hope one day namma indha one-year memories ellam thirumbi paathu, 'Look how far we came' nu santhoshama sirippom. Andha naal varaikkum mattum illa… life long un koodave, un kaiya pudichukittu, happy-ah, peaceful-ah, namma life-a live pannanum. ❤️♾️"
+            ]
+        };
+
+        function createParticles(containerId, count, className) {
+            const container = document.getElementById(containerId);
+            for (let i = 0; i < count; i++) {
+                let el = document.createElement('div');
+                el.className = className;
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.top = Math.random() * 100 + 'vh';
+                
+                if (className === 'star') {
+                    let size = Math.random() * 3 + 1;
+                    el.style.width = size + 'px'; el.style.height = size + 'px';
+                    el.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                    el.style.animationDelay = Math.random() * 2 + 's';
+                } else if (className === 'firefly') {
+                    el.style.animationDuration = (Math.random() * 5 + 8) + 's';
+                    el.style.animationDelay = Math.random() * 5 + 's';
+                }
+                container.appendChild(el);
+            }
+        }
+        createParticles('stars-container', 100, 'star');
+        createParticles('fireflies-container', 20, 'firefly');
+
+        const musicBtn = document.getElementById('music-toggle');
+        const bgMusic = document.getElementById('bg-music');
+        if (CONFIG.musicURL) {
+            bgMusic.src = CONFIG.musicURL;
+            musicBtn.style.display = 'block';
+            let isPlaying = false;
+            musicBtn.onclick = () => {
+                if (isPlaying) { bgMusic.pause(); musicBtn.innerText = '🔇'; }
+                else { bgMusic.play(); musicBtn.innerText = '🎵'; }
+                isPlaying = !isPlaying;
+            };
+        }
+
+        function switchScreen(hideId, showId) {
+            document.getElementById(hideId).classList.remove('active');
+            setTimeout(() => {
+                document.getElementById(showId).classList.add('active');
+                if(showId === 'screen-story') initScrollStory();
+            }, 1000); 
+        }
+
+        document.getElementById('magic-password').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        function checkPassword() {
+            const input = document.getElementById('magic-password');
+            const errorDiv = document.getElementById('pwd-error');
+            const panda = document.getElementById('pwd-panda');
+            const cloud = input.parentElement;
+
+            if (input.value === CONFIG.password) {
+                errorDiv.innerText = "";
+                panda.src = "panda-happy.png";
+                panda.className = "panda-img panda-happy";
+                createFloatingHearts();
+                setTimeout(() => {
+                    switchScreen('screen-password', 'screen-intro');
+                    playIntroSequence();
+                }, 1500);
+            } else {
+                panda.src = "panda-angry.png";
+                panda.className = "panda-img panda-angry";
+                cloud.classList.add('shake-error');
+                errorDiv.innerHTML = "Hmm... nice try 😤🐼<br>Try again!";
+                setTimeout(() => cloud.classList.remove('shake-error'), 400);
+                
+                // Switch back to normal if they want to try again after a moment
+                setTimeout(() => {
+                    panda.src = "panda-normal.png";
+                    panda.className = "panda-img";
+                }, 1500);
+            }
+        }
+
+        function createFloatingHearts() {
+            for(let i=0; i<15; i++){
+                let h = document.createElement('div');
+                h.innerText = '❤️';
+                h.style.position = 'absolute';
+                h.style.left = (40 + Math.random()*20) + '%';
+                h.style.top = '50%';
+                h.style.fontSize = '2rem';
+                h.style.transition = 'all 2s ease-out';
+                h.style.zIndex = '100';
+                document.body.appendChild(h);
+                setTimeout(() => {
+                    h.style.transform = `translate(${(Math.random()-0.5)*200}px, -200px) scale(1.5)`;
+                    h.style.opacity = '0';
+                }, 50);
+                setTimeout(() => h.remove(), 2000);
+            }
+        }
+
+        const introLines = [
+            "Neenga edho thirudirukeenga nu enakku theriyum... 👀",
+            "Aana enna thiruduninga nu kandupidikka...",
+            "Indha 5 questions-ku correct-ah answer pannanum! 🐼❤",
+            "Ready-aa? 😏"
+        ];
+        
+        async function playIntroSequence() {
+            const textEl = document.getElementById('intro-text');
+            const btn = document.getElementById('btn-start-quiz');
+            for(let i=0; i<introLines.length; i++) {
+                textEl.innerText = introLines[i];
+                textEl.style.animation = 'none'; 
+                textEl.offsetHeight; 
+                textEl.style.animation = null;
+                await new Promise(r => setTimeout(r, i === introLines.length - 1 ? 1500 : 3000));
+            }
+            btn.style.display = 'inline-block';
+        }
+
+        let currentQuestion = 0;
+
+        function startQuiz() {
+            switchScreen('screen-intro', 'screen-quiz');
+            setTimeout(loadQuestion, 1000);
+        }
+
+        function loadQuestion() {
+            if(currentQuestion >= CONFIG.questions.length) {
+                endQuiz();
+                return;
+            }
+
+            const qData = CONFIG.questions[currentQuestion];
+            document.getElementById('quiz-progress').innerText = `Question ${currentQuestion + 1} of ${CONFIG.questions.length}`;
+            document.getElementById('quiz-question').innerText = qData.q;
+            document.getElementById('quiz-feedback').innerText = "";
+            
+            // Reset to normal panda for new question
+            const panda = document.getElementById('quiz-panda');
+            panda.src = "panda-normal.png"; 
+            panda.className = "panda-img"; 
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            qData.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.style.background = '#4a69bd';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(index, qData.answer, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex, correctIndex, btnEl) {
+            const panda = document.getElementById('quiz-panda');
+            const feedback = document.getElementById('quiz-feedback');
+            const options = document.getElementById('quiz-options').querySelectorAll('button');
+            options.forEach(b => b.disabled = true);
+
+            if (selectedIndex === correctIndex) {
+                panda.src = "panda-happy.png";
+                panda.className = "panda-img panda-happy";
+                feedback.style.color = "#2ed573";
+                feedback.innerHTML = "Yesssss! 🥰<br>Correct answer! ❤️";
+                createFloatingHearts();
+                setTimeout(() => { currentQuestion++; loadQuestion(); }, 2000);
+            } else {
+                panda.src = "panda-angry.png";
+                panda.className = "panda-img panda-angry";
+                feedback.style.color = "#ff4757";
+                feedback.innerHTML = "WRONGGG! 😤🐼<br>How can you not know this?!<br>Try again! 😭";
+                btnEl.style.transform = "translateX(-10px)";
+                setTimeout(() => btnEl.style.transform = "translateX(10px)", 100);
+                setTimeout(() => btnEl.style.transform = "translateX(0)", 200);
+                
+                setTimeout(() => {
+                    options.forEach(b => b.disabled = false);
+                    // Back to normal face after brief anger
+                    panda.src = "panda-normal.png";
+                    panda.className = "panda-img";
+                }, 1500);
+            }
+        }
+
+        async function endQuiz() {
+            switchScreen('screen-quiz', 'screen-heart-reveal');
+            await new Promise(r => setTimeout(r, 2000));
+            document.getElementById('heart-text-1').innerText = "Ippo kandupidichitten... 👀";
+            await new Promise(r => setTimeout(r, 2000));
+            document.getElementById('heart-text-1').innerText = "Neenga thirudunadhu...";
+            await new Promise(r => setTimeout(r, 2500));
+            document.getElementById('heart-text-1').style.display = "none";
+            document.getElementById('giant-heart').style.display = "block";
+            document.getElementById('heart-text-2').style.display = "block";
+            createFloatingHearts(); createFloatingHearts();
+            await new Promise(r => setTimeout(r, 3000));
+            document.getElementById('punishment-section').style.display = "block";
+        }
+
+        function showPunishment() { switchScreen('screen-heart-reveal', 'screen-punishment'); }
+        function startCandleScene() { switchScreen('screen-punishment', 'screen-candle'); setTimeout(runCountdown, 1000); }
+
+        async function runCountdown() {
+            const cd = document.getElementById('countdown-display');
+            cd.style.display = 'block';
+            for(let i=3; i>0; i--) {
+                cd.innerText = i; cd.style.animation = 'none'; cd.offsetHeight; cd.style.animation = 'popIn 1s forwards';
+                await new Promise(r => setTimeout(r, 1000));
+            }
+            cd.style.display = 'none';
+            document.getElementById('candle-ui').style.display = 'block';
+            initMicrophone();
+        }
+
+        let audioContext, micStream;
+        async function initMicrophone() {
+            try {
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const analyzer = audioContext.createAnalyser();
+                const source = audioContext.createMediaStreamSource(micStream);
+                source.connect(analyzer);
+                analyzer.fftSize = 256;
+                const bufferLength = analyzer.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                const checkBlow = () => {
+                    if(!document.getElementById('candle-flame')) return;
+                    analyzer.getByteFrequencyData(dataArray);
+                    let sum = 0; for (let i = 0; i < bufferLength; i++) { sum += dataArray[i]; }
+                    if ((sum / bufferLength) > 60) { extinguishCandle(); } else { requestAnimationFrame(checkBlow); }
+                };
+                checkBlow();
+            } catch (err) { console.warn("Microphone access denied. Fallback available.", err); }
+        }
+
+        function extinguishCandle() {
+            if(micStream) micStream.getTracks().forEach(track => track.stop());
+            if(audioContext) audioContext.close();
+            const flame = document.getElementById('candle-flame');
+            if(flame.classList.contains('extinguished')) return;
+            flame.style.transform = 'skewX(-45deg) scale(0.5)'; flame.style.opacity = '0';
+            setTimeout(() => {
+                flame.classList.add('extinguished');
+                const panda = document.getElementById('candle-panda');
+                panda.src = "panda-happy.png"; // Swap to happy panda when candle blows out
+                panda.className = "panda-img panda-happy";
+                createFloatingHearts(); createFloatingHearts();
+                setTimeout(() => { switchScreen('screen-candle', 'screen-story'); }, 2000);
+            }, 500);
+        }
+
+        function initScrollStory() {
+            const container = document.getElementById('story-clouds-container');
+            CONFIG.storyParagraphs.forEach((para, index) => {
+                const cloudDiv = document.createElement('div');
+                cloudDiv.className = 'story-cloud';
+                const pImg = document.createElement('img');
+                
+                // Use story panda
+                pImg.src = "panda-story.png"; 
+                
+                pImg.className = "story-panda";
+                cloudDiv.appendChild(pImg);
+                const textP = document.createElement('p'); textP.innerText = para;
+                cloudDiv.appendChild(textP);
+                container.appendChild(cloudDiv);
+            });
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
+            }, { threshold: 0.3 });
+            document.querySelectorAll('.story-cloud').forEach(cloud => { observer.observe(cloud); });
+        }
+    </script>
+</body>
+</html>
